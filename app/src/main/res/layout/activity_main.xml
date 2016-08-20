@@ -6,7 +6,9 @@
         android:layout_height="match_parent"
         tools:context="com.example.ishwar.popularmovies1.MainActivity"
         tools:ignore="MergeRootFrame">
+<!--
 
-    <include layout="@layout/content_main" />
+    <include layout="@layout/fragment_main" />
+-->
 
     </FrameLayout>
