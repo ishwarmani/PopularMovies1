@@ -3,16 +3,18 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_margin="4dp"
+    android:layout_margin="8dp"
     tools:context=".MainActivity$MovieFragment">
 
     <GridView
         android:id="@+id/grid_for_banners"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:columnWidth="172dp"
-        android:verticalSpacing="4dp"
-        android:horizontalSpacing="4dp"
+        android:columnWidth="180dp"
+        android:verticalSpacing="8dp"
+        android:horizontalSpacing="8dp"
+        android:stretchMode="columnWidth"
+        android:gravity="center"
         android:numColumns="auto_fit"
         android:useDefaultMargins="true"/>
 

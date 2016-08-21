@@ -1,19 +1,25 @@
 package com.example.ishwar.popularmovies1;
 
-import android.app.Fragment;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.res.Configuration;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.v4.app.Fragment;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.GridView;
 import android.widget.Toast;
 
 import org.json.JSONArray;
@@ -25,6 +31,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URL;
+import java.util.ArrayList;
 
 import javax.net.ssl.HttpsURLConnection;
 
@@ -39,6 +46,11 @@ public class MovieFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
+    }
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
     }
 
     @Override
@@ -72,7 +84,7 @@ public class MovieFragment extends Fragment {
             FetchMovies fetchMovies = new FetchMovies();
             fetchMovies.execute( sortedOrder );
         }else {
-            Toast.makeText(getContext(), "Some problem with internet connection", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(), "Please switch on your internet connection", Toast.LENGTH_SHORT).show();
         }
 
     }
@@ -81,6 +93,30 @@ public class MovieFragment extends Fragment {
         ConnectivityManager cm = (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo networkInfo = cm.getActiveNetworkInfo();
         return networkInfo != null && networkInfo.isConnectedOrConnecting();
+    }
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState){
+
+        movieAdapter = new MovieAdapter(
+                getActivity(),
+                new ArrayList<Movie>()
+        );
+
+        View rootView = inflater.inflate( R.layout.fragment_main, container, false);
+        GridView gridView = (GridView) rootView.findViewById(R.id.grid_for_banners);
+        gridView.setAdapter( movieAdapter );
+
+        gridView.setOnItemClickListener( new AdapterView.OnItemClickListener(){
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Movie movie = movieAdapter.getItem( position);
+                Intent intent = new Intent( getActivity(), DetailActivity.class).putExtra(Intent.EXTRA_TEXT, movie);
+                startActivity(intent);
+            }
+        });
+
+        return rootView;
     }
 
     public class FetchMovies extends AsyncTask<String, Void, Movie[]> {
@@ -95,7 +131,6 @@ public class MovieFragment extends Fragment {
             final String TMDB_RELEASE_DATE = "release_date";
             final String TMDB_USER_RATING = "vote_average";
             final String TMDB_OVERVIEW = "overview";
-            final String TMDB_BACKDROP_PATH = "backdrop_path";
 
             try {
                 JSONObject jsonObj = new JSONObject(jsonString);
@@ -110,9 +145,8 @@ public class MovieFragment extends Fragment {
                     String releaseDate = jsonObject.getString(TMDB_RELEASE_DATE);
                     float userRating = Float.parseFloat(jsonObject.getString(TMDB_USER_RATING));
                     String overView = jsonObject.getString(TMDB_OVERVIEW);
-                    String backdropPath = jsonObject.getString(TMDB_BACKDROP_PATH);
 
-                    moviesArray[i] = new Movie(originalTitle, bannerPath, releaseDate, userRating, overView, backdropPath);
+                    moviesArray[i] = new Movie(originalTitle, bannerPath, releaseDate, userRating, overView);
                 }
                 return moviesArray;
             } catch (JSONException j) {
@@ -188,7 +222,7 @@ public class MovieFragment extends Fragment {
         }
 
         @Override
-        protected void onPostExecute (Movie[]movies){
+        protected void onPostExecute (Movie[] movies){
             if (movies != null) {
                 movieAdapter.clear();
                 for (Movie movie : movies) {

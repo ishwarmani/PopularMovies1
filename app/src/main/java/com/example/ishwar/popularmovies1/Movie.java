@@ -3,9 +3,6 @@ package com.example.ishwar.popularmovies1;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-/**
- * Created by ishwar on 18/8/16.
- */
 public class Movie implements Parcelable {
 
     private String name;
@@ -13,16 +10,14 @@ public class Movie implements Parcelable {
     private String releaseDate;
     private float userRating;
     private String overView;
-    private String backdropPath;
 
-    Movie( String name, String posterPath, String releaseDate, float userRating, String overView, String backdropPath){
+    Movie( String name, String posterPath, String releaseDate, float userRating, String overView){
 
         this.name = name;
         this.bannerPath = posterPath ;
         this.releaseDate = releaseDate;
         this.userRating = userRating;
         this.overView = overView;
-        this.backdropPath = backdropPath;
     }
 
     public String getName() {
@@ -46,11 +41,6 @@ public class Movie implements Parcelable {
         return overView;
     }
 
-    public String getBackdropPath() {
-        final String BASE_URL = "http://image.tmdb.org/t/p/w500/";
-        return BASE_URL + backdropPath;
-    }
-
     public void setName(String name) {
         this.name = name;
     }
@@ -71,17 +61,12 @@ public class Movie implements Parcelable {
         this.overView = overView;
     }
 
-    public void setBackdropPath(String backdropPath) {
-        this.backdropPath = backdropPath;
-    }
-
     protected Movie(Parcel in) {
         name = in.readString();
         bannerPath = in.readString();
         releaseDate = in.readString();
         userRating = in.readFloat();
         overView = in.readString();
-        backdropPath = in.readString();
     }
 
     @Override
@@ -96,7 +81,6 @@ public class Movie implements Parcelable {
         dest.writeString(releaseDate);
         dest.writeFloat(userRating);
         dest.writeString(overView);
-        dest.writeString(backdropPath);
     }
 
     @SuppressWarnings("unused")
